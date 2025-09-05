@@ -1,0 +1,6 @@
+json_rpc_url: "https://api.devnet.solana.com"
+websocket_url: ""
+keypair_path: "/Users/apple/Desktop/Hackathons/metahack/talentchainpro/solana-contracts/keys/deployer.json"
+address_labels:
+  "11111111111111111111111111111111": "System Program"
+commitment: confirmed
