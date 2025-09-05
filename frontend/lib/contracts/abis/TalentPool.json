@@ -1,0 +1,706 @@
+{
+  "contractName": "TalentPool",
+  "abi": [
+    {
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "_skillTokenAddress",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_initialFeeCollector",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
+          "name": "_initialAdmin",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "createPool",
+      "inputs": [
+        {
+          "name": "title",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "jobType",
+          "type": "uint8",
+          "internalType": "enum ITalentPool.JobType"
+        },
+        {
+          "name": "requiredSkills",
+          "type": "string[]",
+          "internalType": "string[]"
+        },
+        {
+          "name": "minimumLevels",
+          "type": "uint8[]",
+          "internalType": "uint8[]"
+        },
+        {
+          "name": "salaryMin",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "salaryMax",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "deadline",
+          "type": "uint64",
+          "internalType": "uint64"
+        },
+        {
+          "name": "location",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "isRemote",
+          "type": "bool",
+          "internalType": "bool"
+        },
+        {
+          "name": "stakeAmount",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "submitApplication",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "skillTokenIds",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "coverLetter",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "portfolio",
+          "type": "string",
+          "internalType": "string"
+        },
+        {
+          "name": "stakeAmount",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "selectCandidate",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "candidate",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "completePool",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "withdrawApplication",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "closePool",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
+    },
+    {
+      "type": "function",
+      "name": "getPool",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct ITalentPool.JobPool",
+          "components": [
+            {
+              "name": "id",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "company",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "jobType",
+              "type": "uint8",
+              "internalType": "enum ITalentPool.JobType"
+            },
+            {
+              "name": "requiredSkills",
+              "type": "string[]",
+              "internalType": "string[]"
+            },
+            {
+              "name": "minimumLevels",
+              "type": "uint8[]",
+              "internalType": "uint8[]"
+            },
+            {
+              "name": "salaryMin",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "salaryMax",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "stakeAmount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deadline",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "createdAt",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "status",
+              "type": "uint8",
+              "internalType": "enum ITalentPool.PoolStatus"
+            },
+            {
+              "name": "selectedCandidate",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "totalApplications",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "location",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "isRemote",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getApplication",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "candidate",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct ITalentPool.Application",
+          "components": [
+            {
+              "name": "candidate",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "skillTokenIds",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            },
+            {
+              "name": "stakeAmount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "appliedAt",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "status",
+              "type": "uint8",
+              "internalType": "enum ITalentPool.ApplicationStatus"
+            },
+            {
+              "name": "matchScore",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "coverLetter",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "portfolio",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getPoolApplications",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "applications",
+          "type": "tuple[]",
+          "internalType": "struct ITalentPool.Application[]",
+          "components": [
+            {
+              "name": "candidate",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "skillTokenIds",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            },
+            {
+              "name": "stakeAmount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "appliedAt",
+              "type": "uint64",
+              "internalType": "uint64"
+            },
+            {
+              "name": "status",
+              "type": "uint8",
+              "internalType": "enum ITalentPool.ApplicationStatus"
+            },
+            {
+              "name": "matchScore",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "coverLetter",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "portfolio",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getPoolsByCompany",
+      "inputs": [
+        {
+          "name": "company",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getApplicationsByCandidate",
+      "inputs": [
+        {
+          "name": "candidate",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256[]",
+          "internalType": "uint256[]"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getPoolMetrics",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "tuple",
+          "internalType": "struct ITalentPool.PoolMetrics",
+          "components": [
+            {
+              "name": "totalStaked",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "averageMatchScore",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "completionRate",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "averageTimeToFill",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "calculateMatchScore",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "candidate",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getActivePoolsCount",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "getTotalPoolsCount",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "event",
+      "name": "PoolCreated",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "company",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "jobType",
+          "type": "uint8",
+          "indexed": false,
+          "internalType": "enum ITalentPool.JobType"
+        },
+        {
+          "name": "stakeAmount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        },
+        {
+          "name": "salaryRange",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "ApplicationSubmitted",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "candidate",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "skillTokenIds",
+          "type": "uint256[]",
+          "indexed": false,
+          "internalType": "uint256[]"
+        },
+        {
+          "name": "stakeAmount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "MatchMade",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "company",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "candidate",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "matchScore",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "PoolCompleted",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "selectedCandidate",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "totalReward",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "StakeWithdrawn",
+      "inputs": [
+        {
+          "name": "poolId",
+          "type": "uint256",
+          "indexed": true,
+          "internalType": "uint256"
+        },
+        {
+          "name": "user",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        },
+        {
+          "name": "penalty",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    }
+  ],
+  "bytecode": "0x...",
+  "deployedBytecode": "0x...",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
