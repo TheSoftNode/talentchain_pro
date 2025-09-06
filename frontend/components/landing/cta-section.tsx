@@ -6,25 +6,20 @@ import { Button } from "@/components/ui/button";
 import { VideoModal } from "@/components/ui/video-modal";
 import { useVideoModal } from "@/hooks/useVideoModal";
 import { VIDEO_CONFIG } from "@/lib/config/video";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useWeb3AuthConnect } from "@web3auth/modal/react";
+import { useWeb3AuthSession } from "@/hooks/useWeb3AuthSession";
 import { useRouter } from "next/navigation";
 
 export function CTASection() {
   const { isOpen, videoUrl, title, description, openModal, closeModal } = useVideoModal();
   const router = useRouter();
   
-  // Use actual wallet connection state
-  let isConnected = false;
-  let connectLoading = false;
+  // Use actual Web3Auth hooks - same as working wallet button
+  const { isConnected: web3AuthConnected, userInfo, isLoading: sessionLoading } = useWeb3AuthSession();
+  const { connect: connectWeb3Auth, loading: web3AuthLoading } = useWeb3AuthConnect();
   
-  try {
-    const auth = useAuth();
-    isConnected = auth.isConnected;
-    connectLoading = auth.connectLoading || false;
-  } catch (error) {
-    // Web3Auth context not available, use fallback state
-    console.log('Web3Auth context not available in CTASection, using fallback state');
-  }
+  const isConnected = web3AuthConnected;
+  const connectLoading = web3AuthLoading || sessionLoading;
 
   const handleGetStarted = async () => {
     // If already connected, go to dashboard
