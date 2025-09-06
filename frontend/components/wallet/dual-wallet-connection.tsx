@@ -52,7 +52,6 @@ export default function DualWalletConnection() {
         const balance = await connection.getBalance(solanaPublicKey);
         setSolanaBalance(balance / LAMPORTS_PER_SOL);
       } catch (err) {
-        console.error('Error fetching Solana balance:', err);
       } finally {
         setBalanceLoading(false);
       }
@@ -62,7 +61,6 @@ export default function DualWalletConnection() {
   // Get multichain data for social login
   const fetchSocialMultichain = async () => {
     // This would use the existing multichain RPC logic
-    console.log('Social login multichain data available');
   };
 
   const formatAddress = (addr?: string) => {

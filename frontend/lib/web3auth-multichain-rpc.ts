@@ -26,7 +26,6 @@ export async function getSolanaAccount(provider: IProvider): Promise<string | nu
     
     return keypair.publicKey.toBase58();
   } catch (error) {
-    console.log("Private key not available (likely external wallet):", error);
     return null;
   }
 }
@@ -58,7 +57,6 @@ export async function getSolanaBalance(
     
     return balance / LAMPORTS_PER_SOL;
   } catch (error) {
-    console.log("Solana balance not available (likely external wallet):", error);
     return null;
   }
 }
@@ -76,7 +74,6 @@ export async function getEthereumAccount(provider: IProvider): Promise<string> {
     
     return (accounts as string[])[0];
   } catch (error) {
-    console.error("Error getting Ethereum account:", error);
     throw error;
   }
 }
@@ -117,7 +114,6 @@ export async function getAllChainAccounts(provider: IProvider) {
       multiChainAvailable: loginMethod === 'social'
     };
   } catch (error) {
-    console.error("Error getting multi-chain accounts:", error);
     throw error;
   }
 }

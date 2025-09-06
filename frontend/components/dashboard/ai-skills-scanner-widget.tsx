@@ -13,7 +13,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED
+import { useWeb3Auth } from "@web3auth/modal/react";
 import { DashboardWidget } from "./dashboard-widget";
 import { 
   Scan, 
@@ -39,7 +40,7 @@ interface SkillDetection {
 }
 
 export function AISkillsScannerWidget() {
-  const { isConnected } = useAuth();
+  const { isConnected } = useWeb3Auth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [detectedSkills, setDetectedSkills] = useState<SkillDetection[]>([]);

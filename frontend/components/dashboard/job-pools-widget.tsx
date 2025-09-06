@@ -43,7 +43,8 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { DashboardWidget } from "./dashboard-widget";
 import { useJobPools, useSkillTokens } from "@/hooks/useDashboardData";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED
+import { useWeb3Auth, useWeb3AuthUser } from "@web3auth/modal/react";
 import { JobPoolInfo, PoolStatus } from "@/lib/types/wallet";
 import { cn } from "@/lib/utils";
 import { ContractCreateJobPoolDialog } from "@/components/jobs/contract-create-job-pool-dialog";
@@ -53,7 +54,15 @@ interface JobPoolsWidgetProps {
 }
 
 export function JobPoolsWidget({ className }: JobPoolsWidgetProps) {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // DISABLED
+  const { userInfo } = useWeb3AuthUser();
+  
+  // Mock user object for disabled hook with proper structure
+  const user = userInfo ? { 
+    userInfo, 
+    profile: {},
+    accountId: userInfo.email || userInfo.name || 'anonymous'
+  } : null;
   const { jobPools, isLoading, error, refetch, applyToPool, leavePool } = useJobPools();
   const { skillTokens } = useSkillTokens();
 

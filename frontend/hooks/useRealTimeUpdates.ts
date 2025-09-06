@@ -52,7 +52,6 @@ export function useRealTimeUpdates(): UseRealTimeUpdatesReturn {
       const ws = new WebSocket(wsUrl);
       
       ws.onopen = () => {
-        console.log('📡 WebSocket connected');
         setIsConnected(true);
         setConnectionStatus('connected');
         reconnectAttemptsRef.current = 0;
@@ -68,7 +67,6 @@ export function useRealTimeUpdates(): UseRealTimeUpdatesReturn {
       ws.onmessage = (event) => {
         try {
           const data: RealtimeEvent = JSON.parse(event.data);
-          console.log('📡 Received real-time event:', data);
           
           setLastEvent(data);
           
@@ -79,7 +77,6 @@ export function useRealTimeUpdates(): UseRealTimeUpdatesReturn {
               try {
                 callback(data);
               } catch (error) {
-                console.error('Error in event callback:', error);
               }
             });
           }
@@ -91,24 +88,20 @@ export function useRealTimeUpdates(): UseRealTimeUpdatesReturn {
               try {
                 callback(data);
               } catch (error) {
-                console.error('Error in event callback:', error);
               }
             });
           }
         } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
         }
       };
 
       ws.onclose = () => {
-        console.log('📡 WebSocket disconnected');
         setIsConnected(false);
         setConnectionStatus('disconnected');
         
         // Attempt to reconnect if it wasn't a manual close
         if (reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS && walletConnected) {
           reconnectAttemptsRef.current += 1;
-          console.log(`📡 Attempting to reconnect... (${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`);
           
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
@@ -117,13 +110,11 @@ export function useRealTimeUpdates(): UseRealTimeUpdatesReturn {
       };
 
       ws.onerror = (error) => {
-        console.error('📡 WebSocket error:', error);
         setConnectionStatus('error');
       };
 
       wsRef.current = ws;
     } catch (error) {
-      console.error('📡 Failed to connect WebSocket:', error);
       setConnectionStatus('error');
     }
   }, [walletConnected, user?.accountId]);
@@ -259,7 +250,6 @@ export function useDashboardRealtimeSync(
     
     const unsubscribeFunctions = relevantEvents.map(eventType =>
       subscribe(eventType, (event) => {
-        console.log(`🔄 Dashboard refresh triggered by ${event.type}`);
         refreshCallback();
       })
     );

@@ -13,15 +13,32 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useWeb3AuthMultichain, WalletStatus } from "@/hooks/use-web3auth-multichain";
-import { useState } from "react";
+import { useWeb3AuthConnect, useWeb3AuthDisconnect, useWeb3AuthUser, useWeb3Auth } from "@web3auth/modal/react";
+import { useWeb3AuthSession } from "@/hooks/useWeb3AuthSession";
+import { useAccount, useBalance } from "wagmi";
+import { useState, useEffect } from "react";
+import { getSolanaAccount, getEthereumAccount } from "@/lib/web3auth-multichain-rpc";
 
 export function Web3AuthWalletButton() {
   const pathname = usePathname();
-  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [solanaAddress, setSolanaAddress] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
   
-  // Always call the hook at the top level - React hooks rules
-  const wallet = useWeb3AuthMultichain();
+  const { isConnected: web3AuthConnected, userInfo, provider, isLoading: sessionLoading } = useWeb3AuthSession();
+  const { connect: connectWeb3Auth, loading: web3AuthLoading } = useWeb3AuthConnect();
+  const { disconnect: disconnectWeb3Auth } = useWeb3AuthDisconnect();
+  
+  const { address: ethAddress, isConnected: ethConnected } = useAccount();
+  const { data: ethBalance } = useBalance({ address: ethAddress });
+
+  // Allow time for proper initialization to prevent connection loops
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 2000); // Give enough time for Web3Auth to initialize and restore session
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Check if we're on a dashboard page
   const isOnDashboard = pathname?.startsWith('/dashboard');
@@ -29,8 +46,8 @@ export function Web3AuthWalletButton() {
   // Get display content based on user info or addresses
   const getDisplayContent = () => {
     // If we have user name, show initials
-    if (wallet.userInfo?.name) {
-      const names = wallet.userInfo.name.split(' ');
+    if (userInfo?.name) {
+      const names = userInfo.name.split(' ');
       if (names.length >= 2) {
         return names[0][0] + names[1][0]; // First letter of first and last name
       } else {
@@ -39,34 +56,87 @@ export function Web3AuthWalletButton() {
     }
     
     // If we have address, show truncated version
-    if (wallet.primaryAddress) {
-      return wallet.formatAddress(wallet.primaryAddress);
+    if (ethAddress) {
+      return formatAddress(ethAddress);
     }
     
     // Default connected state
     return '••';
   };
 
-  // Handle connection using Web3Auth's built-in modal
-  const handleConnect = async () => {
+  const formatAddress = (addr?: string) => {
+    if (!addr) return "Not connected";
+    if (addr.length <= 8) return addr;
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  };
+
+  // Handle multichain address derivation after successful connection
+  const fetchMultichainData = async () => {
+    if (!provider || !web3AuthConnected) return;
+    
     try {
-      // Use Web3Auth's built-in modal - shows all login methods automatically
-      await wallet.handleConnect();
+      const solAddress = await getSolanaAccount(provider);
+      setSolanaAddress(solAddress);
     } catch (error) {
-      console.error("Connection failed:", error);
+      // Silently handle error - likely external wallet
     }
   };
 
+  // Handle connection using direct Web3Auth hook with better session persistence
+  const handleConnect = async () => {
+    if (web3AuthLoading || isInitializing) return; // Prevent connection during initialization
+    
+    try {
+      await connectWeb3Auth();
+      
+      // After successful connection, fetch multichain data
+      setTimeout(fetchMultichainData, 1000);
+    } catch (error) {
+      // Silent error handling
+    }
+  };
+
+    // Handle disconnect with proper error handling
+  const handleDisconnect = async () => {
+    try {
+      await disconnectWeb3Auth();
+      
+      // Clear any local state
+      setSolanaAddress(null);
+      
+    } catch (error) {
+      // Silent error handling
+    }
+  };
+
+  // Show loading state while initializing or checking/restoring session
+  if (isInitializing || sessionLoading) {
+    return (
+      <Button
+        disabled={true}
+        size="sm"
+        className="group relative bg-slate-400 text-white shadow-lg px-2 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm w-8 h-8 sm:w-auto sm:h-auto rounded-full sm:rounded-md"
+      >
+        <span className="relative z-10 flex items-center">
+          <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
+          <span className="hidden sm:inline ml-2">
+            {isInitializing ? "Initializing..." : "Checking..."}
+          </span>
+        </span>
+      </Button>
+    );
+  }
+
   // Show connect button when not connected
-  if (!wallet.isConnected) {
+  if (!web3AuthConnected) {
     return (
       <Button
         onClick={handleConnect}
-        disabled={wallet.isConnecting}
+        disabled={web3AuthLoading}
         size="sm"
         className="group relative bg-hedera-600 hover:bg-hedera-700 text-white shadow-lg shadow-hedera-500/25 hover:shadow-hedera-600/30 transition-all duration-300 font-semibold px-2 py-2 sm:px-4 sm:py-2 text-xs sm:text-sm w-8 h-8 sm:w-auto sm:h-auto rounded-full sm:rounded-md"
       >
-        {wallet.isConnecting ? (
+        {web3AuthLoading ? (
           <span className="relative z-10 flex items-center">
             <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
             <span className="hidden sm:inline ml-2">Connecting...</span>
@@ -91,9 +161,9 @@ export function Web3AuthWalletButton() {
           size="sm"
           className="relative flex items-center justify-center border-hedera-300/30 dark:border-hedera-600/30 hover:bg-hedera-50/50 dark:hover:bg-hedera-900/20 w-8 h-8 sm:w-9 sm:h-9 p-0 rounded-full"
         >
-          {wallet.userInfo?.profileImage ? (
+          {userInfo?.profileImage ? (
             <Avatar className="h-full w-full">
-              <AvatarImage src={wallet.userInfo.profileImage} className="rounded-full" />
+              <AvatarImage src={userInfo.profileImage} className="rounded-full" />
               <AvatarFallback className="bg-hedera-100 dark:bg-hedera-900 text-hedera-700 dark:text-hedera-300 text-xs font-semibold rounded-full">
                 {getDisplayContent()}
               </AvatarFallback>
@@ -116,75 +186,47 @@ export function Web3AuthWalletButton() {
         <DropdownMenuSeparator />
         
         {/* User Info */}
-        {wallet.userInfo?.email && (
+        {userInfo?.email && (
           <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-            📧 {wallet.userInfo.email}
+            📧 {userInfo.email}
           </DropdownMenuItem>
         )}
         
         {/* Auth Method */}
-        {wallet.authMethod && (
+        {userInfo && (
           <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-            🔐 {wallet.authMethod}
+            🔐 {(userInfo as any)?.typeOfLogin || 'Social Login'}
           </DropdownMenuItem>
         )}
         
         <DropdownMenuSeparator />
         
-        {/* Debug info - temporary */}
-        <DropdownMenuItem disabled className="text-xs text-gray-500">
-          Debug: ETH connected: {wallet.ethereum.isConnected ? 'YES' : 'NO'}, SOL connected: {wallet.solana.isConnected ? 'YES' : 'NO'}
-        </DropdownMenuItem>
-        
         {/* Ethereum Chain Info */}
-        {wallet.ethereum.isConnected && (
+        {ethConnected && ethAddress && (
           <>
             <DropdownMenuLabel className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
-              ⟠ Ethereum {wallet.ethereum.chainId && `(Chain ${wallet.ethereum.chainId})`}
+              ⟠ Ethereum
             </DropdownMenuLabel>
             <DropdownMenuItem disabled className="text-xs text-muted-foreground font-mono ml-4">
-              {wallet.formatAddress(wallet.ethereum.address)}
+              {formatAddress(ethAddress)}
             </DropdownMenuItem>
             <DropdownMenuItem disabled className="text-xs text-muted-foreground ml-4 flex items-center justify-between">
               <span>Balance:</span>
-              <span className="flex items-center gap-1">
-                {wallet.ethereum.isLoading ? (
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                ) : (
-                  `${wallet.ethereum.balanceFormatted || '0'} ${wallet.ethereum.symbol}`
-                )}
+              <span>
+                {ethBalance ? `${Number(ethBalance.value) / Math.pow(10, ethBalance.decimals)} ${ethBalance.symbol}` : '0 ETH'}
               </span>
             </DropdownMenuItem>
           </>
         )}
         
         {/* Solana Chain Info */}
-        {wallet.solana.isConnected && (
+        {solanaAddress && (
           <>
             <DropdownMenuLabel className="text-xs text-purple-600 dark:text-purple-400 flex items-center gap-1">
-              ◎ Solana ({wallet.solana.network})
+              ◎ Solana (derived from social login)
             </DropdownMenuLabel>
             <DropdownMenuItem disabled className="text-xs text-muted-foreground font-mono ml-4">
-              {wallet.formatAddress(wallet.solana.address)}
-            </DropdownMenuItem>
-            <DropdownMenuItem disabled className="text-xs text-muted-foreground ml-4 flex items-center justify-between">
-              <span>Balance:</span>
-              <span className="flex items-center gap-1">
-                {wallet.solana.isLoading ? (
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                ) : (
-                  `${wallet.solana.balanceFormatted || '0.0000'} ${wallet.solana.symbol}`
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-4 w-4 p-0"
-                  onClick={() => wallet.fetchSolanaBalance(wallet.solana.address!)}
-                  disabled={wallet.solana.isLoading}
-                >
-                  <RefreshCw className="w-3 h-3" />
-                </Button>
-              </span>
+              {formatAddress(solanaAddress)}
             </DropdownMenuItem>
           </>
         )}
@@ -193,9 +235,9 @@ export function Web3AuthWalletButton() {
         <DropdownMenuSeparator />
         <DropdownMenuItem disabled className="text-xs text-muted-foreground flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-          {wallet.hasEthereumAddress && wallet.hasSolanaAddress ? 'Multichain Connected' : 
-           wallet.hasEthereumAddress ? 'Ethereum Connected' : 
-           wallet.hasSolanaAddress ? 'Solana Connected' : 'Connected'}
+          {ethAddress && solanaAddress ? 'Multichain Connected' : 
+           ethAddress ? 'Ethereum Connected' : 
+           solanaAddress ? 'Solana Connected' : 'Connected'}
         </DropdownMenuItem>
         
         <DropdownMenuSeparator />
@@ -220,12 +262,12 @@ export function Web3AuthWalletButton() {
         
         {/* Disconnect */}
         <DropdownMenuItem
-          onClick={wallet.handleDisconnect}
-          disabled={wallet.isConnecting}
+          onClick={handleDisconnect}
+          disabled={web3AuthLoading}
           className="text-red-600 focus:text-red-600 cursor-pointer"
         >
           <LogOut className="mr-2 h-4 w-4" />
-          {wallet.isConnecting ? "Disconnecting..." : "Disconnect"}
+          {web3AuthLoading ? "Disconnecting..." : "Disconnect"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

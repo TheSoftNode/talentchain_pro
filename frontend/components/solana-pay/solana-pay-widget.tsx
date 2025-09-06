@@ -9,8 +9,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/hooks/useWeb3Auth";
-import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED
+// import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain"; // REMOVED
+import { useWeb3Auth, useWeb3AuthUser } from "@web3auth/modal/react";
+import { getSolanaAccount } from "@/lib/web3auth-multichain-rpc";
 import { QrCode, CreditCard, Zap, AlertCircle } from "lucide-react";
 
 interface PaymentRequest {
@@ -22,8 +24,33 @@ interface PaymentRequest {
 }
 
 export function SolanaPayWidget() {
-  const { isConnected } = useAuth();
-  const { solana } = useWeb3AuthMultichain();
+  // const { isConnected } = useAuth(); // DISABLED
+  
+  // Use direct Web3Auth hooks like the working implementation
+  const { isConnected: web3AuthConnected, provider } = useWeb3Auth();
+  const { userInfo } = useWeb3AuthUser();
+  
+  // Use the working connection status
+  const isConnected = web3AuthConnected;
+  
+  // Get Solana address from working RPC implementation when available
+  const [solanaAddress, setSolanaAddress] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchSolanaAddress = async () => {
+      if (web3AuthConnected && provider && userInfo) {
+        try {
+          const address = await getSolanaAccount(provider);
+          setSolanaAddress(address);
+          console.log('✅ Solana Pay: Got Solana address from social login:', address);
+        } catch (error) {
+          console.log('⚠️ Solana Pay: Could not get Solana address:', error);
+        }
+      }
+    };
+    
+    fetchSolanaAddress();
+  }, [web3AuthConnected, provider, userInfo]);
   
   // Platform's Solana address - this is where payments are received
   const PLATFORM_WALLET_ADDRESS = "3TMTTgHkY14THG8jtsP8QEshQxcudviQMwRXmSdZFCC5";

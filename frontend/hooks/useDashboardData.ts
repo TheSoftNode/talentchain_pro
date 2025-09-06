@@ -276,7 +276,6 @@ export function useDashboardData(): UseDashboardDataReturn {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch governance data';
       setGovernanceError(errorMessage);
-      console.error('Governance fetch error:', err);
     } finally {
       setIsLoadingGovernance(false);
     }
@@ -291,7 +290,6 @@ export function useDashboardData(): UseDashboardDataReturn {
         throw new Error(response.error || 'Failed to create proposal');
       }
     } catch (error) {
-      console.error('Error creating proposal:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -305,7 +303,6 @@ export function useDashboardData(): UseDashboardDataReturn {
         throw new Error(response.error || 'Failed to cast vote');
       }
     } catch (error) {
-      console.error('Error casting vote:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -319,7 +316,6 @@ export function useDashboardData(): UseDashboardDataReturn {
         throw new Error(response.error || 'Failed to delegate voting power');
       }
     } catch (error) {
-      console.error('Error delegating voting power:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -333,7 +329,6 @@ export function useDashboardData(): UseDashboardDataReturn {
         throw new Error(response.error || 'Failed to undelegate voting power');
       }
     } catch (error) {
-      console.error('Error undeleting voting power:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -346,7 +341,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return null;
     } catch (error) {
-      console.error('Error getting proposal:', error);
       return null;
     }
   }, []);
@@ -359,7 +353,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return null;
     } catch (error) {
-      console.error('Error getting voting power:', error);
       return null;
     }
   }, []);
@@ -374,7 +367,6 @@ export function useDashboardData(): UseDashboardDataReturn {
         throw new Error(response.error || 'Failed to queue proposal');
       }
     } catch (error) {
-      console.error('Error queuing proposal:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -388,7 +380,6 @@ export function useDashboardData(): UseDashboardDataReturn {
         throw new Error(response.error || 'Failed to execute proposal');
       }
     } catch (error) {
-      console.error('Error executing proposal:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -402,7 +393,6 @@ export function useDashboardData(): UseDashboardDataReturn {
         throw new Error(response.error || 'Failed to cancel proposal');
       }
     } catch (error) {
-      console.error('Error canceling proposal:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -415,7 +405,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return 'unknown';
     } catch (error) {
-      console.error('Error getting proposal status:', error);
       return 'unknown';
     }
   }, []);
@@ -428,7 +417,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return null;
     } catch (error) {
-      console.error('Error getting vote receipt:', error);
       return null;
     }
   }, []);
@@ -441,7 +429,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting quorum:', error);
       return 0;
     }
   }, []);
@@ -454,7 +441,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting voting delay:', error);
       return 0;
     }
   }, []);
@@ -467,7 +453,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting voting period:', error);
       return 0;
     }
   }, []);
@@ -480,7 +465,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting proposal threshold:', error);
       return 0;
     }
   }, []);
@@ -493,7 +477,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return [];
     } catch (error) {
-      console.error('Error getting all proposals:', error);
       return [];
     }
   }, []);
@@ -506,7 +489,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return [];
     } catch (error) {
-      console.error('Error getting active proposals:', error);
       return [];
     }
   }, []);
@@ -519,7 +501,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return false;
     } catch (error) {
-      console.error('Error checking if proposal can execute:', error);
       return false;
     }
   }, []);
@@ -532,7 +513,6 @@ export function useDashboardData(): UseDashboardDataReturn {
       }
       return false;
     } catch (error) {
-      console.error('Error checking if voter has voted:', error);
       return false;
     }
   }, []);
@@ -558,7 +538,6 @@ export function useDashboardData(): UseDashboardDataReturn {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch dashboard data';
       setError(errorMessage);
-      console.error('Dashboard data fetch error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -709,7 +688,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch skill tokens';
       setError(errorMessage);
-      console.error('Skill tokens fetch error:', err);
       
       // Don't retry automatically to prevent infinite loops
       // User can manually retry using the refetch function
@@ -750,7 +728,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
         throw new Error(response.error || 'Failed to create skill token');
       }
     } catch (error) {
-      console.error('Error creating skill token:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, [user?.accountId]);
@@ -774,7 +751,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
         throw new Error(response.error || 'Failed to update skill level');
       }
     } catch (error) {
-      console.error('Error updating skill level:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -789,7 +765,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
         throw new Error(response.error || 'Failed to endorse skill token');
       }
     } catch (error) {
-      console.error('Error endorsing skill token:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -803,7 +778,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
         throw new Error(response.error || 'Failed to renew skill token');
       }
     } catch (error) {
-      console.error('Error renewing skill token:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -817,7 +791,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
         throw new Error(response.error || 'Failed to revoke skill token');
       }
     } catch (error) {
-      console.error('Error revoking skill token:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -830,7 +803,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
       }
       return [];
     } catch (error) {
-      console.error('Error getting skill endorsements:', error);
       return [];
     }
   }, []);
@@ -844,7 +816,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
         throw new Error(response.error || 'Failed to mark expired tokens');
       }
     } catch (error) {
-      console.error('Error marking expired tokens:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -857,7 +828,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
       }
       return [];
     } catch (error) {
-      console.error('Error getting tokens by category:', error);
       return [];
     }
   }, []);
@@ -870,7 +840,6 @@ export function useSkillTokens(): UseSkillTokensReturn {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting total skills by category:', error);
       return 0;
     }
   }, []);
@@ -924,7 +893,6 @@ export function useJobPools(): UseJobPoolsReturn {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch job pools';
       setError(errorMessage);
-      console.error('Job pools fetch error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -968,7 +936,6 @@ export function useJobPools(): UseJobPoolsReturn {
         throw new Error(response.error || 'Failed to create job pool');
       }
     } catch (error) {
-      console.error('Error creating job pool:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -999,7 +966,6 @@ export function useJobPools(): UseJobPoolsReturn {
         throw new Error(response.error || 'Failed to apply to pool');
       }
     } catch (error) {
-      console.error('Error applying to pool:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, [user?.accountId]);
@@ -1015,7 +981,6 @@ export function useJobPools(): UseJobPoolsReturn {
       ));
       return { success: true, transactionId: 'placeholder' };
     } catch (error) {
-      console.error('Error leaving job pool:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1023,40 +988,32 @@ export function useJobPools(): UseJobPoolsReturn {
   // Add missing functionality with placeholder implementations
   const selectCandidate = useCallback(async (poolId: string, candidateAddress: string): Promise<TransactionResult> => {
     try {
-      console.log('Selecting candidate:', poolId, candidateAddress);
       return { success: true, transactionId: 'placeholder' };
     } catch (error) {
-      console.error('Error selecting candidate:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
 
   const completePool = useCallback(async (poolId: string): Promise<TransactionResult> => {
     try {
-      console.log('Completing pool:', poolId);
       return { success: true, transactionId: 'placeholder' };
     } catch (error) {
-      console.error('Error completing pool:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
 
   const closePool = useCallback(async (poolId: string): Promise<TransactionResult> => {
     try {
-      console.log('Closing pool:', poolId);
       return { success: true, transactionId: 'placeholder' };
     } catch (error) {
-      console.error('Error closing pool:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
 
   const calculateMatchScore = useCallback(async (poolId: string, candidateAddress: string): Promise<number> => {
     try {
-      console.log('Calculating match score for:', poolId, candidateAddress);
       return Math.floor(Math.random() * 100); // Placeholder
     } catch (error) {
-      console.error('Error calculating match score:', error);
       return 0;
     }
   }, []);
@@ -1069,7 +1026,6 @@ export function useJobPools(): UseJobPoolsReturn {
       }
       return null;
     } catch (error) {
-      console.error('Error getting pool metrics:', error);
       return null;
     }
   }, []);
@@ -1082,7 +1038,6 @@ export function useJobPools(): UseJobPoolsReturn {
       }
       return null;
     } catch (error) {
-      console.error('Error getting talent pool global stats:', error);
       return null;
     }
   }, []);
@@ -1095,7 +1050,6 @@ export function useJobPools(): UseJobPoolsReturn {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting active pools count:', error);
       return 0;
     }
   }, []);
@@ -1108,7 +1062,6 @@ export function useJobPools(): UseJobPoolsReturn {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting total pools count:', error);
       return 0;
     }
   }, []);
@@ -1188,7 +1141,6 @@ export function useReputation(userId?: string) {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch reputation data';
       setError(errorMessage);
-      console.error('Reputation fetch error:', err);
       
       // Don't retry automatically to prevent infinite loops
       // User can manually retry using the refetch function
@@ -1208,7 +1160,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to register oracle');
       }
     } catch (error) {
-      console.error('Error registering oracle:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1230,7 +1181,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to submit evaluation');
       }
     } catch (error) {
-      console.error('Error submitting evaluation:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1244,7 +1194,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to challenge evaluation');
       }
     } catch (error) {
-      console.error('Error challenging evaluation:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1258,7 +1207,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to resolve challenge');
       }
     } catch (error) {
-      console.error('Error resolving challenge:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1272,7 +1220,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to slash oracle');
       }
     } catch (error) {
-      console.error('Error slashing oracle:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1286,7 +1233,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to withdraw oracle stake');
       }
     } catch (error) {
-      console.error('Error withdrawing oracle stake:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1299,7 +1245,6 @@ export function useReputation(userId?: string) {
       }
       return null;
     } catch (error) {
-      console.error('Error getting oracle info:', error);
       return null;
     }
   }, []);
@@ -1312,7 +1257,6 @@ export function useReputation(userId?: string) {
       }
       return [];
     } catch (error) {
-      console.error('Error getting active oracles:', error);
       return [];
     }
   }, []);
@@ -1325,7 +1269,6 @@ export function useReputation(userId?: string) {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting category score:', error);
       return 0;
     }
   }, []);
@@ -1338,7 +1281,6 @@ export function useReputation(userId?: string) {
       }
       return null;
     } catch (error) {
-      console.error('Error getting work evaluation:', error);
       return null;
     }
   }, []);
@@ -1351,7 +1293,6 @@ export function useReputation(userId?: string) {
       }
       return [];
     } catch (error) {
-      console.error('Error getting user evaluations:', error);
       return [];
     }
   }, []);
@@ -1364,7 +1305,6 @@ export function useReputation(userId?: string) {
       }
       return null;
     } catch (error) {
-      console.error('Error getting global stats:', error);
       return null;
     }
   }, []);
@@ -1379,7 +1319,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to queue proposal');
       }
     } catch (error) {
-      console.error('Error queuing proposal:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1393,7 +1332,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to execute proposal');
       }
     } catch (error) {
-      console.error('Error executing proposal:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1407,7 +1345,6 @@ export function useReputation(userId?: string) {
         throw new Error(response.error || 'Failed to cancel proposal');
       }
     } catch (error) {
-      console.error('Error canceling proposal:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
     }
   }, []);
@@ -1420,7 +1357,6 @@ export function useReputation(userId?: string) {
       }
       return 'unknown';
     } catch (error) {
-      console.error('Error getting proposal status:', error);
       return 'unknown';
     }
   }, []);
@@ -1433,7 +1369,6 @@ export function useReputation(userId?: string) {
       }
       return null;
     } catch (error) {
-      console.error('Error getting vote receipt:', error);
       return null;
     }
   }, []);
@@ -1446,7 +1381,6 @@ export function useReputation(userId?: string) {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting quorum:', error);
       return 0;
     }
   }, []);
@@ -1459,7 +1393,6 @@ export function useReputation(userId?: string) {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting voting delay:', error);
       return 0;
     }
   }, []);
@@ -1472,7 +1405,6 @@ export function useReputation(userId?: string) {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting voting period:', error);
       return 0;
     }
   }, []);
@@ -1485,7 +1417,6 @@ export function useReputation(userId?: string) {
       }
       return 0;
     } catch (error) {
-      console.error('Error getting proposal threshold:', error);
       return 0;
     }
   }, []);
@@ -1498,7 +1429,6 @@ export function useReputation(userId?: string) {
       }
       return [];
     } catch (error) {
-      console.error('Error getting all proposals:', error);
       return [];
     }
   }, []);
@@ -1511,7 +1441,6 @@ export function useReputation(userId?: string) {
       }
       return [];
     } catch (error) {
-      console.error('Error getting active proposals:', error);
       return [];
     }
   }, []);
@@ -1524,7 +1453,6 @@ export function useReputation(userId?: string) {
       }
       return false;
     } catch (error) {
-      console.error('Error checking if proposal can execute:', error);
       return false;
     }
   }, []);
@@ -1537,7 +1465,6 @@ export function useReputation(userId?: string) {
       }
       return false;
     } catch (error) {
-      console.error('Error checking if voter has voted:', error);
       return false;
     }
   }, []);

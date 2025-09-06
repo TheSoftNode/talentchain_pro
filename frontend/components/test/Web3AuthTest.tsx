@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useWeb3Auth";
-import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain";
+// import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain"; // DISABLED
 
 export function Web3AuthTest() {
   const { 
@@ -14,7 +14,14 @@ export function Web3AuthTest() {
     disconnectLoading 
   } = useAuth();
   
-  const { ethereum, solana, getWalletGuidance, isExternalWallet, canAccessPrivateKey } = useWeb3AuthMultichain();
+  // const { ethereum, solana, getWalletGuidance, isExternalWallet, canAccessPrivateKey } = useWeb3AuthMultichain(); // DISABLED
+  
+  // Mock data for disabled multichain hook
+  const ethereum = { isConnected: false, address: null, chainId: null, balanceFormatted: null, symbol: null };
+  const solana = { isConnected: false, address: null, network: null, balanceFormatted: null, symbol: null };
+  const getWalletGuidance = () => ({ type: 'info', title: 'Test Component Disabled', message: 'Multichain hook disabled to prevent errors', suggestions: [] });
+  const isExternalWallet = () => false;
+  const canAccessPrivateKey = () => false;
 
   const handleConnect = async () => {
     try {

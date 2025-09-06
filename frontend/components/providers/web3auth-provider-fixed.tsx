@@ -32,10 +32,8 @@ export function Web3AuthAppProviderFixed({ children, web3authInitialState }: Web
   // Get Web3Auth Client ID from environment variables
   const clientId = process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID;
 
-  console.log('🔑 Fixed Provider - Web3Auth Client ID loaded:', !!clientId);
 
   if (!clientId) {
-    console.error('❌ Web3Auth Client ID not found in environment variables');
     // For testing, provide a fallback instead of throwing
     return (
       <QueryClientProvider client={queryClient}>

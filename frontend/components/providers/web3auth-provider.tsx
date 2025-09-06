@@ -3,10 +3,13 @@
 import { Web3AuthProvider, type Web3AuthContextConfig } from "@web3auth/modal/react";
 import { WagmiProvider } from "@web3auth/modal/react/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { IWeb3AuthState, WEB3AUTH_NETWORK, WALLET_CONNECTORS, AUTH_CONNECTION, CHAIN_NAMESPACES } from "@web3auth/modal";
+import { 
+  IWeb3AuthState, 
+  WEB3AUTH_NETWORK, 
+  WALLET_CONNECTORS, 
+  CHAIN_NAMESPACES 
+} from "@web3auth/modal";
 import React, { ReactNode, useMemo, useState, useEffect } from "react";
-import { useTheme } from "next-themes";
-import { mainnet, polygon, arbitrum, optimism, sepolia } from "wagmi/chains";
 
 interface Web3AuthAppProviderProps {
   children: ReactNode;
@@ -34,15 +37,12 @@ export function Web3AuthAppProvider({ children, web3authInitialState }: Web3Auth
   // Get Web3Auth Client ID from environment variables
   const clientId = process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID;
 
-  console.log('🔑 Web3Auth Client ID loaded:', !!clientId);
-  console.log('🌐 Environment check:', process.env.NODE_ENV);
 
   if (!clientId) {
-    console.error('❌ Web3Auth Client ID not found in environment variables');
     throw new Error("NEXT_PUBLIC_WEB3AUTH_CLIENT_ID is required. Please set it in your .env.local file");
   }
 
-  // Static Web3Auth configuration with proper multichain setup
+  // Static Web3Auth configuration with proper multichain setup and modal config
   const web3AuthConfig: Web3AuthContextConfig = useMemo(() => {
     return {
       web3AuthOptions: {
@@ -58,6 +58,58 @@ export function Web3AuthAppProvider({ children, web3authInitialState }: Web3Auth
           ticker: "ETH",
           tickerName: "Ethereum",
         },
+        modalConfig: {
+          connectors: {
+            [WALLET_CONNECTORS.AUTH]: {
+              label: "Social Login",
+              loginMethods: {
+                google: {
+                  name: "Continue with Google",
+                  authConnectionId: "w3a-google",
+                  groupedAuthConnectionId: "aggregate-sapphire",
+                  showOnModal: true,
+                },
+                facebook: {
+                  name: "Facebook",
+                  authConnectionId: "w3a-facebook", 
+                  groupedAuthConnectionId: "aggregate-sapphire",
+                  showOnModal: true,
+                },
+                twitter: {
+                  name: "Twitter",
+                  authConnectionId: "w3a-twitter",
+                  groupedAuthConnectionId: "aggregate-sapphire", 
+                  showOnModal: true,
+                },
+                discord: {
+                  name: "Discord", 
+                  authConnectionId: "w3a-discord",
+                  groupedAuthConnectionId: "aggregate-sapphire",
+                  showOnModal: true,
+                },
+                email_passwordless: {
+                  name: "Email (Passwordless)",
+                  authConnectionId: "w3a-email-passwordless",
+                  groupedAuthConnectionId: "aggregate-sapphire",
+                  showOnModal: true,
+                }
+              },
+              showOnModal: true,
+            },
+            [WALLET_CONNECTORS.METAMASK]: {
+              label: "MetaMask",
+              showOnModal: true,
+            },
+            [WALLET_CONNECTORS.WALLET_CONNECT_V2]: {
+              label: "WalletConnect",
+              showOnModal: true,
+            },
+            [WALLET_CONNECTORS.COINBASE]: {
+              label: "Coinbase Wallet",
+              showOnModal: true,
+            }
+          },
+        },
         uiConfig: {
           appName: "TalentChain Pro",
           mode: "light",
@@ -68,8 +120,7 @@ export function Web3AuthAppProvider({ children, web3authInitialState }: Web3Auth
             primary: "#768729",
           },
           loginMethodsOrder: [
-            "google", "facebook", "twitter", "discord", "email_passwordless",
-            "metamask", "wallet_connect_v2"
+            "google", "facebook", "twitter", "discord", "email_passwordless"
           ],
           primaryButton: "socialLogin",
         },

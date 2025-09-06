@@ -12,7 +12,8 @@ import {
   ReputationStatsCard,
 } from "./stats-card";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED
+import { useWeb3Auth } from "@web3auth/modal/react";
 import { useRealTimeUpdates } from "@/hooks/useRealTimeUpdates";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +22,7 @@ interface DashboardOverviewProps {
 }
 
 export function DashboardOverview({ className }: DashboardOverviewProps) {
-  const { isConnected } = useAuth();
+  const { isConnected } = useWeb3Auth();
   const { stats, isLoading, error, refetch, lastUpdated } = useDashboardData();
   const { isConnected: realtimeConnected, connectionStatus } = useRealTimeUpdates();
 

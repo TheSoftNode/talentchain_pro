@@ -24,7 +24,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED
+import { useWeb3Auth, useWeb3AuthUser } from "@web3auth/modal/react";
 import { SkillTokenInfo } from "@/lib/types/wallet";
 import { ContractCreateSkillDialog } from "@/components/skills/contract-create-skill-dialog";
 import { UpdateSkillTokenDialog } from "@/components/skills/update-skill-token-dialog";
@@ -55,7 +56,12 @@ const skillCategories = [
 ];
 
 export default function SkillsPage() {
-  const { user, isConnected } = useAuth();
+  // const { user, isConnected } = useAuth(); // DISABLED
+  const { isConnected } = useWeb3Auth();
+  const { userInfo } = useWeb3AuthUser();
+  
+  // Mock user object for disabled hook
+  const user = userInfo ? { userInfo, profile: { skills: [] } } : null;
   const {
     skillTokens,
     isLoading: isLoadingSkills,

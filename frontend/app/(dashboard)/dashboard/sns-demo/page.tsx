@@ -1,21 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SolanaSNSWidget } from "@/components/sns/solana-hackathon-sns";
-import { useAuth } from "@/hooks/useWeb3Auth";
-import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED
+// import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain"; // REMOVED
+import { useWeb3Auth, useWeb3AuthUser } from "@web3auth/modal/react";
+import { getSolanaAccount } from "@/lib/web3auth-multichain-rpc";
 import { Globe, Zap, Code2, Rocket, ExternalLink, Crown } from "lucide-react";
 
 export default function SNSDemoPage() {
-  const { isConnected } = useAuth();
-  const { solana } = useWeb3AuthMultichain();
+  // const { isConnected } = useAuth(); // DISABLED
+  
+  // Use direct Web3Auth hooks like the working implementation
+  const { isConnected: web3AuthConnected, provider } = useWeb3Auth();
+  const { userInfo } = useWeb3AuthUser();
+  
+  // Use the working connection status
+  const isConnected = web3AuthConnected;
+  
+  // Get Solana address from working RPC implementation when available
+  const [solanaAddress, setSolanaAddress] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchSolanaAddress = async () => {
+      if (web3AuthConnected && provider && userInfo) {
+        try {
+          const address = await getSolanaAccount(provider);
+          setSolanaAddress(address);
+          console.log('✅ SNS Demo: Got Solana address from social login:', address);
+        } catch (error) {
+          console.log('⚠️ SNS Demo: Could not get Solana address:', error);
+        }
+      }
+    };
+    
+    fetchSolanaAddress();
+  }, [web3AuthConnected, provider, userInfo]);
 
-  const walletAddress = solana.address;
+  const walletAddress = solanaAddress;
   const network = process.env.NEXT_PUBLIC_SOLANA_RPC_URL?.includes('devnet') ? 'Devnet' : 'Devnet';
 
   return (

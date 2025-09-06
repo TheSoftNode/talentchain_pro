@@ -14,12 +14,29 @@ import {
 import { SolanaPayWidget } from "@/components/solana-pay/solana-pay-widget";
 import { SolanaSNSWidget } from "@/components/sns/solana-hackathon-sns";
 import { AISkillsScannerWidget } from "@/components/dashboard/ai-skills-scanner-widget";
-import { useAuth } from "@/hooks/useWeb3Auth";
-import { WifiOff, Scan, DollarSign, Link, Shield, Play } from "lucide-react";
+import { useWeb3AuthSession } from "@/hooks/useWeb3AuthSession";
+import { WifiOff, Scan, DollarSign, Link, Shield, Play, Loader2 } from "lucide-react";
 
 // Dashboard page component with proper sidebar layout
 export default function DashboardPage() {
-  const { isConnected } = useAuth();
+  const { isConnected, isLoading } = useWeb3AuthSession();
+
+  // Show loading state while checking session
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-hedera-600" />
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+            Loading Dashboard
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400">
+            Checking wallet connection...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

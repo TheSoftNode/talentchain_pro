@@ -36,8 +36,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain";
-import { useAuth } from "@/hooks/useWeb3Auth";
+// import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain"; // REMOVED
+import { useWeb3Auth, useWeb3AuthUser } from "@web3auth/modal/react";
+import { getSolanaAccount } from "@/lib/web3auth-multichain-rpc";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED - using direct Web3Auth hooks instead
 import { useSolanaProvider } from "@/hooks/useSolanaProvider";
 import { 
   Search, 
@@ -80,15 +82,41 @@ interface DomainPayment {
 
 // Internal component that uses the SNS hooks
 function SNSHooksComponent() {
-  const { isConnected } = useAuth();
-  const { solana } = useWeb3AuthMultichain();
-  const { signAndSendTransaction } = useSolanaProvider();
+  // const { isConnected } = useAuth(); // DISABLED - using direct Web3Auth hooks instead
   
-  // Create connection object for SNS hooks
-  const connection = solana.connection || new Connection(clusterApiUrl('mainnet-beta'));
+  // Use direct Web3Auth hooks like the working implementation
+  const { isConnected: web3AuthConnected, provider } = useWeb3Auth();
+  const { userInfo } = useWeb3AuthUser();
   
-  // Convert wallet address to PublicKey for SNS hooks
-  const publicKey = solana.address ? new PublicKey(solana.address) : null;
+  // Use the working connection status
+  const isConnected = web3AuthConnected;
+  
+  const { signAndSendTransaction, accounts, connection: solanaConnection } = useSolanaProvider();
+  
+  // Get Solana address from working RPC implementation when available
+  const [solanaAddress, setSolanaAddress] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchSolanaAddress = async () => {
+      if (web3AuthConnected && provider && userInfo) {
+        try {
+          const address = await getSolanaAccount(provider);
+          setSolanaAddress(address);
+        } catch (error) {
+          // Silently handle error
+        }
+      }
+    };
+    
+    fetchSolanaAddress();
+  }, [web3AuthConnected, provider, userInfo]);
+  
+  // Create connection object for SNS hooks - use the one from useSolanaProvider
+  const connection = solanaConnection || new Connection(clusterApiUrl('mainnet-beta'));
+  
+  // Use Solana address from social login or provider accounts
+  const walletAddress = solanaAddress || (accounts && accounts.length > 0 ? accounts[0] : null);
+  const publicKey = walletAddress ? new PublicKey(walletAddress) : null;
   
   // SNS React hooks
   const bonfidaOwner = useDomainOwner(connection, "bonfida");
@@ -124,8 +152,9 @@ function SNSHooksComponent() {
   
   const qrRef = useRef<HTMLDivElement>(null);
   
-  // Platform wallet for receiving payments (replace with your actual wallet)
-  const PLATFORM_WALLET = new PublicKey("3TMTTgHkY14THG8jtsP8QEshQxcudviQMwRXmSdZFCC5");
+  // Use the user's own wallet address for receiving Solana Pay (or use a platform wallet for fees)
+  // For demo purposes, we'll use the user's wallet - in production, use your platform wallet
+  const PLATFORM_WALLET = publicKey || new PublicKey("3TMTTgHkY14THG8jtsP8QEshQxcudviQMwRXmSdZFCC5");
   
   // Domain registration pricing (in USDC for actual registration)
   const DOMAIN_PRICE_USDC = 10; // 10 USDC per domain registration (real SNS pricing)
@@ -199,7 +228,6 @@ function SNSHooksComponent() {
       });
 
     } catch (error: any) {
-      console.error('Payment setup failed:', error);
       setRegistrationStatus({
         loading: false,
         error: error.message || 'Failed to setup payment',
@@ -217,7 +245,6 @@ function SNSHooksComponent() {
         const qr = createQR(paymentModal.payment.qrUrl, 300, "white");
         qr.append(qrRef.current);
       } catch (err) {
-        console.error("Failed to create QR code:", err);
         setRegistrationStatus(prev => ({
           ...prev,
           error: "Failed to create payment QR code"
@@ -248,7 +275,12 @@ function SNSHooksComponent() {
     });
 
     try {
-      console.log(`🔄 Starting domain registration for ${domainName}.sol...`);
+      setRegistrationStatus(prev => ({
+        ...prev,
+        isLoading: true,
+        error: null,
+        stage: 'checking-availability'
+      }));
       
       // Step 1: Check if domain is still available
       const { pubkey: domainKey } = getDomainKeySync(domainName);
@@ -289,8 +321,7 @@ function SNSHooksComponent() {
       // Optional: Add referrer key if you have one (for revenue sharing)
       const referrerKey: PublicKey | undefined = undefined; // Replace with your referrer key if approved
       
-      console.log(`📝 Creating registration instruction for ${domainName}.sol...`);
-      
+      // Step 4: Create domain registration instruction
       const registrationIx = await registerDomainNameV2(
         connection,
         domainName,
@@ -302,7 +333,6 @@ function SNSHooksComponent() {
       );
 
       // Step 5: Create and send transaction
-      console.log(`🚀 Sending registration transaction...`);
       
       const transaction = new Transaction();
       
@@ -324,10 +354,8 @@ function SNSHooksComponent() {
       }
 
       const signature = await signAndSendTransaction(transaction);
-      console.log(`✅ Transaction sent: ${signature}`);
 
       // Step 6: Confirm transaction
-      console.log(`⏳ Confirming transaction...`);
       
       const confirmation = await connection.confirmTransaction({
         signature,
@@ -340,7 +368,6 @@ function SNSHooksComponent() {
       }
 
       // Step 7: Verify domain registration
-      console.log(`🔍 Verifying domain registration...`);
       
       const registeredDomainAccount = await connection.getAccountInfo(domainKey);
       if (!registeredDomainAccount) {
@@ -353,8 +380,6 @@ function SNSHooksComponent() {
         throw new Error("Domain registration verification failed - ownership mismatch");
       }
 
-      console.log(`🎉 Domain ${domainName}.sol successfully registered!`);
-      console.log(`📊 Transaction: https://solscan.io/tx/${signature}`);
       
       setRegistrationStatus({
         loading: false,
@@ -370,7 +395,6 @@ function SNSHooksComponent() {
       }));
 
     } catch (error: any) {
-      console.error('❌ Domain registration failed:', error);
       
       let errorMessage = 'Failed to complete domain registration';
       
@@ -416,7 +440,7 @@ function SNSHooksComponent() {
     }
   };
 
-  if (!isConnected) {
+  if (!isConnected || !publicKey) {
     return (
       <Card className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-purple-200 dark:border-purple-800">
         <CardHeader>
@@ -432,8 +456,16 @@ function SNSHooksComponent() {
           <div className="text-center py-8">
             <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600 dark:text-gray-400">
-              Please connect your wallet to access SNS features
+              {!isConnected 
+                ? "Please connect your wallet to access SNS features"
+                : "Please ensure your Solana wallet is properly connected"
+              }
             </p>
+            {isConnected && !publicKey && (
+              <p className="text-sm text-red-600 dark:text-red-400 mt-2">
+                Solana address not found. Try reconnecting your wallet.
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

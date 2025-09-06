@@ -1,10 +1,5 @@
 "use client";
 
-// Compatibility hook for Web3Auth integration
-// This provides backward compatibility for existing components while using the real multichain hook
-
-import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain";
-
 export type UserRole = 'talent' | 'employer' | 'oracle' | null;
 
 export interface Web3AuthUser {
@@ -51,75 +46,23 @@ interface Web3AuthContextType {
 
 // Real compatibility hook that uses the actual multichain hook
 export function useWeb3AuthContext(): Web3AuthContextType {
-  // Always call hooks at the top level - React hooks rules
-  const wallet = useWeb3AuthMultichain();
+  // DISABLED: Multichain hook removed to prevent errors
   
-  // Handle case where wallet hook returns undefined/null  
-  if (!wallet) {
-    return {
-      user: null,
-      isConnected: false,
-      isLoading: false,
-      connectWallet: async () => {
-        console.warn('Web3Auth context not available - cannot connect wallet');
-      },
-      disconnectWallet: () => {
-        console.warn('Web3Auth context not available - cannot disconnect wallet');
-      },
-      setUserRole: () => {},
-      updateProfile: () => {},
-      refreshBalances: async () => {},
-      connectLoading: false,
-      connectError: null,
-      disconnectLoading: false,
-      disconnectError: null,
-    };
-  }
-    
-    // Map multichain wallet data to the expected interface
-    const user: Web3AuthUser | null = wallet.isConnected ? {
-      userInfo: wallet.userInfo,
-      walletAddress: wallet.primaryAddress,
-      accountId: wallet.primaryAddress,
-      ethereum: {
-        address: wallet.ethereum.address,
-        isConnected: wallet.ethereum.isConnected,
-        chainId: wallet.ethereum.chainId,
-        balance: wallet.ethereum.balance,
-      },
-      solana: {
-        address: wallet.solana.address,
-        isConnected: wallet.solana.isConnected,
-        balance: wallet.solana.balance?.toString(),
-      },
-      role: null, // Default role
-      profile: {
-        name: wallet.userInfo?.name,
-        email: wallet.userInfo?.email,
-        skills: [],
-        experience: '',
-        companyName: '',
-        industry: '',
-        reputation: 0,
-      }
-    } : null;
-
+  // Return disabled/mock state
   return {
-    user,
-    isConnected: wallet.isConnected,
-    isLoading: wallet.isConnecting,
-    connectWallet: wallet.handleConnect,
-    disconnectWallet: wallet.handleDisconnect,
-    setUserRole: () => {}, // Not implemented in multichain hook
-    updateProfile: () => {}, // Not implemented in multichain hook
-    refreshBalances: async () => {
-      if (wallet.solana.address) {
-        await wallet.fetchSolanaBalance(wallet.solana.address);
-      }
+    user: null,
+    isConnected: false,
+    isLoading: false,
+    connectWallet: async () => {
     },
-    connectLoading: wallet.isConnecting,
-    connectError: wallet.error,
-    disconnectLoading: false, // Not available in multichain hook
+    disconnectWallet: () => {
+    },
+    setUserRole: () => {},
+    updateProfile: () => {},
+    refreshBalances: async () => {},
+    connectLoading: false,
+    connectError: null,
+    disconnectLoading: false,
     disconnectError: null,
   };
 }

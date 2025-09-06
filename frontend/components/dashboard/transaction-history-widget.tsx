@@ -32,7 +32,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DashboardWidget } from "./dashboard-widget";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED
+import { useWeb3Auth, useWeb3AuthUser } from "@web3auth/modal/react";
 import { cn } from "@/lib/utils";
 
 interface TransactionHistoryWidgetProps {
@@ -117,7 +118,12 @@ const mockTransactions: Transaction[] = [
 ];
 
 export function TransactionHistoryWidget({ className }: TransactionHistoryWidgetProps) {
-  const { user, isConnected } = useAuth();
+  // const { user, isConnected } = useAuth(); // DISABLED
+  const { isConnected } = useWeb3Auth();
+  const { userInfo } = useWeb3AuthUser();
+  
+  // Mock user object for disabled hook
+  const user = userInfo ? { userInfo, profile: {} } : null;
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);

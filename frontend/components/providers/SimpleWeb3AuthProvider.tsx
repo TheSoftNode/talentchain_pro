@@ -87,7 +87,6 @@ export function SimpleWeb3AuthProvider({ children, web3authInitialState }: Simpl
     },
   }), [clientId]);
 
-  console.log('🚀 SimpleWeb3AuthProvider initializing with clientId:', !!clientId);
 
   return (
     <QueryClientProvider client={queryClient}>

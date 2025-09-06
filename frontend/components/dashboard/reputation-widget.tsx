@@ -38,7 +38,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { DashboardWidget } from "./dashboard-widget";
 import { useReputation, useSkillTokens } from "@/hooks/useDashboardData";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useAuth } from "@/hooks/useWeb3Auth"; // DISABLED
+import { useWeb3Auth, useWeb3AuthUser } from "@web3auth/modal/react";
 import { dashboardApi } from "@/lib/api/dashboard-service";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api/client";
@@ -48,7 +49,15 @@ interface ReputationWidgetProps {
 }
 
 export function ReputationWidget({ className }: ReputationWidgetProps) {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // DISABLED
+  const { userInfo } = useWeb3AuthUser();
+  
+  // Mock user object for disabled hook with proper structure
+  const user = userInfo ? { 
+    userInfo, 
+    profile: {},
+    accountId: userInfo.email || userInfo.name || 'anonymous'
+  } : null;
   const { reputation, history, isLoading, error, refetch } = useReputation();
   const { skillTokens } = useSkillTokens();
 

@@ -20,7 +20,7 @@ import { NavbarBackground } from "@/components/ui/background-elements";
 import { Logo } from "@/components/ui/logo";
 import { Web3AuthWalletButton } from "@/components/wallet/web3auth-wallet-button";
 import { MobileMenu } from "@/components/navigation/mobile-menu";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useWeb3AuthSession } from "@/hooks/useWeb3AuthSession";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,11 +33,8 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   
-  // For now, just use a simple state - no complex Web3Auth integration in navbar
-  // This prevents the hooks ordering issues
-  const [isConnected] = useState(false);
+  const { isConnected } = useWeb3AuthSession();
 
-  // Dynamically build navigation items based on connection status
   const navigationItems = [
     {
       name: "Solutions",
@@ -49,13 +46,11 @@ export function Navbar() {
       ]
     },
     { name: "Marketplace", href: "/marketplace" },
-    // Only show Dashboard when wallet is connected
     ...(isConnected ? [{ name: "Dashboard", href: "/dashboard" }] : []),
     { name: "Docs", href: "/docs", external: true }
   ];
 
   useEffect(() => {
-    // Only run on client side
     if (typeof window === 'undefined') return;
     
     const handleScroll = () => {

@@ -56,10 +56,9 @@ export default function RootLayout({
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
-          enableSystem
+          enableSystem={false}
           disableTransitionOnChange
         >
-          {/* Phase 1: Replace AuthProvider with ProperWeb3AuthProvider */}
           <ProperWeb3AuthProvider>
             {children}
           </ProperWeb3AuthProvider>

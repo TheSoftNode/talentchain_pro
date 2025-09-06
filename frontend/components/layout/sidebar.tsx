@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, Trophy, Settings, X, LogOut, User, ChevronLeft, ChevronRight, Scan, DollarSign, Link2, Shield, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import {  useWeb3AuthUser } from "@web3auth/modal/react";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -65,7 +65,20 @@ const navigation = [
 
 export function Sidebar({ isOpen, onToggle, onClose, isCollapsed, onToggleCollapse, isDesktop }: SidebarProps) {
     const pathname = usePathname();
-    const { user, disconnectWallet } = useAuth();
+    // const { user, disconnectWallet } = useAuth(); // DISABLED
+    const { userInfo } = useWeb3AuthUser();
+    
+    // Mock user object for disabled hook
+    const user = userInfo ? { 
+        userInfo, 
+        accountId: userInfo.email || userInfo.name || 'anonymous',
+        ethereum: { balance: '0' },
+        solana: { balance: '0' }
+    } : null;
+    
+    const disconnectWallet = () => {
+        console.log('Disconnect functionality disabled - using Web3Auth wallet button instead');
+    };
 
     const handleSignOut = async () => {
         await disconnectWallet();

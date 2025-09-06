@@ -35,7 +35,6 @@ export function useSolanaWallet() {
         if (accounts) {
           setAccounts(accounts);
         }
-      }).catch(console.error);
     } else {
       setSolanaWallet(null);
       setAccounts([]);

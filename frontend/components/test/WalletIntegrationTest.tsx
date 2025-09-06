@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain";
+// import { useWeb3AuthMultichain } from "@/hooks/use-web3auth-multichain"; // DISABLED
 import { Loader2, CheckCircle2, XCircle, Wallet } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -14,7 +14,21 @@ export function WalletIntegrationTest() {
   const [mounted, setMounted] = useState(false);
   
   // Always call hooks - React hooks rule #1
-  const wallet = useWeb3AuthMultichain();
+  // const wallet = useWeb3AuthMultichain(); // DISABLED
+  
+  // Mock wallet data for disabled test component
+  const wallet = {
+    isConnected: false,
+    status: "disabled",
+    connectorName: null,
+    userInfo: { name: "Test Disabled", email: "disabled@test.com" },
+    isConnecting: false,
+    ethereum: { isConnected: false, address: undefined, balanceFormatted: null, symbol: null, chainId: null },
+    solana: { isConnected: false, address: undefined, balanceFormatted: null, symbol: null, network: null, isLoading: false },
+    handleConnect: () => console.log("Test component disabled"),
+    handleDisconnect: () => console.log("Test component disabled"),
+    fetchSolanaBalance: () => console.log("Test component disabled")
+  };
   
   // Ensure component is mounted before showing content
   useEffect(() => {
@@ -175,7 +189,7 @@ export function WalletIntegrationTest() {
                 </Button>
                 
                 <Button
-                  onClick={() => wallet.fetchSolanaBalance && wallet.fetchSolanaBalance(wallet.solana.address)}
+                  onClick={() => wallet.fetchSolanaBalance && wallet.fetchSolanaBalance()}
                   disabled={wallet.solana.isLoading}
                   size="sm"
                   variant="outline"

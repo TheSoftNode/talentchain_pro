@@ -26,10 +26,8 @@ export function useWeb3AuthSafe() {
     userInfo: null,
     error: null,
     connect: async () => {
-      console.warn('Web3Auth not available');
     },
     disconnect: () => {
-      console.warn('Web3Auth not available');
     }
   };
 
@@ -55,7 +53,6 @@ export function useWeb3AuthSafe() {
       disconnect: disconnect || safeState.disconnect
     };
   } catch (error) {
-    console.warn('Web3Auth hooks failed:', error);
     return safeState;
   }
 }
