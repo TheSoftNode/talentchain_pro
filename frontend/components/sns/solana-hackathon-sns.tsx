@@ -860,126 +860,136 @@ function SNSHooksComponent() {
         </CardContent>
       </Card>
 
-      {/* Solana Pay Modal */}
+      {/* Solana Pay Modal - Compact Version */}
       {paymentModal.isOpen && paymentModal.payment && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-md w-full p-6 shadow-xl"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-sm w-full my-4 shadow-xl max-h-[90vh] flex flex-col"
           >
-            <div className="text-center">
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2 flex items-center justify-center gap-2">
-                <QrCode className="w-6 h-6 text-purple-600" />
-                Domain Registration Payment
+            <div className="flex-shrink-0 text-center p-4 border-b border-slate-200 dark:border-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center justify-center gap-2">
+                <QrCode className="w-5 h-5 text-purple-600" />
+                Domain Payment
               </h3>
-              <p className="text-slate-600 dark:text-slate-400 mb-6">
-                Scan with any Solana Pay compatible wallet to register your domain
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                Scan to register {paymentModal.payment.domain}.sol
               </p>
-              
-              <div className="bg-white p-4 rounded-lg mb-4 inline-block shadow-sm">
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {/* QR Code - Full Size */}
+              <div className="bg-white p-4 rounded-lg inline-block shadow-sm mx-auto">
                 <div ref={qrRef} className="flex justify-center" />
               </div>
               
-              <div className="space-y-2 mb-6 text-left bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">Domain:</span>
-                  <span className="font-medium text-slate-900 dark:text-white font-mono">{paymentModal.payment.domain}.sol</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">Convenience Fee:</span>
-                  <span className="font-medium text-slate-900 dark:text-white">{paymentModal.payment.amount} SOL</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">Registration Cost:</span>
-                  <span className="font-medium text-slate-900 dark:text-white">{DOMAIN_PRICE_USDC} USDC</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">Status:</span>
-                  <Badge 
-                    variant={paymentModal.payment.status === 'pending' ? 'outline' : 
-                             paymentModal.payment.status === 'registered' ? 'default' : 'destructive'}
-                    className="text-xs"
-                  >
-                    {paymentModal.payment.status === 'pending' ? 'Awaiting Payment' :
-                     paymentModal.payment.status === 'registered' ? 'Registered' :
-                     paymentModal.payment.status === 'paid' ? 'Payment Confirmed' : 'Failed'}
-                  </Badge>
+              {/* Payment Details - More Compact */}
+              <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <div className="text-slate-600 dark:text-slate-400">Domain</div>
+                    <div className="font-mono font-medium text-slate-900 dark:text-white">{paymentModal.payment.domain}.sol</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-600 dark:text-slate-400">Fee</div>
+                    <div className="font-medium text-slate-900 dark:text-white">{paymentModal.payment.amount} SOL</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-600 dark:text-slate-400">Cost</div>
+                    <div className="font-medium text-slate-900 dark:text-white">{DOMAIN_PRICE_USDC} USDC</div>
+                  </div>
+                  <div>
+                    <div className="text-slate-600 dark:text-slate-400">Status</div>
+                    <Badge 
+                      variant={paymentModal.payment.status === 'pending' ? 'outline' : 
+                               paymentModal.payment.status === 'registered' ? 'default' : 'destructive'}
+                      className="text-xs h-5"
+                    >
+                      {paymentModal.payment.status === 'pending' ? 'Pending' :
+                       paymentModal.payment.status === 'registered' ? 'Done' :
+                       paymentModal.payment.status === 'paid' ? 'Paid' : 'Failed'}
+                    </Badge>
+                  </div>
                 </div>
               </div>
 
-              {/* USDC Requirement Notice */}
-              <div className="text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 p-3 rounded border border-amber-200 dark:border-amber-800 mb-4">
-                <div className="font-medium mb-1">💰 USDC Required:</div>
-                <p>You need at least {DOMAIN_PRICE_USDC} USDC in your wallet to complete domain registration. The {paymentModal.payment.amount} SOL payment above is a convenience fee for our service.</p>
+              {/* Notices - More Compact */}
+              <div className="space-y-2">
+                <div className="text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 p-2 rounded border border-amber-200 dark:border-amber-800">
+                  <div className="font-medium">💰 Need {DOMAIN_PRICE_USDC} USDC in wallet</div>
+                  <p className="mt-1">SOL fee covers convenience service</p>
+                </div>
+
+                <div className="text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-200 dark:border-blue-800">
+                  <div className="font-medium">📱 Quick Steps:</div>
+                  <div className="mt-1 space-y-0.5">
+                    <div>1. Scan QR with Solana wallet</div>
+                    <div>2. Pay {paymentModal.payment.amount} SOL</div>
+                    <div>3. Click "Complete Registration"</div>
+                  </div>
+                </div>
               </div>
 
-              {/* Payment Instructions */}
-              <div className="text-xs text-gray-500 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/20 p-3 rounded border border-blue-200 dark:border-blue-800 mb-4">
-                <div className="font-medium text-blue-700 dark:text-blue-300 mb-1">📱 How to pay:</div>
-                <ol className="text-left space-y-1 list-decimal list-inside">
-                  <li>Open your Solana wallet app (Phantom, Solflare, etc.)</li>
-                  <li>Scan the QR code above</li>
-                  <li>Confirm the payment of {paymentModal.payment.amount} SOL</li>
-                  <li>Return here and click "Complete Registration with USDC"</li>
-                </ol>
-              </div>
+              {/* Success Message - Compact */}
+              {paymentModal.payment.status === 'registered' && (
+                <div className="p-2 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                  <div className="flex items-center gap-2 text-green-800 dark:text-green-200 text-sm">
+                    <CheckCircle className="w-4 h-4" />
+                    <span className="font-medium">Registration Complete!</span>
+                  </div>
+                  <p className="text-xs text-green-700 dark:text-green-300 mt-1">
+                    {paymentModal.payment.domain}.sol is yours!
+                  </p>
+                </div>
+              )}
+            </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-3">
+            {/* Action Buttons - Fixed at Bottom */}
+            <div className="flex-shrink-0 p-4 border-t border-slate-200 dark:border-slate-800 space-y-2">
+              {paymentModal.payment.status === 'pending' && (
+                <Button 
+                  onClick={completeDomainRegistration}
+                  disabled={registrationStatus.loading}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white h-9"
+                  size="sm"
+                >
+                  {registrationStatus.loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Complete Registration
+                    </>
+                  )}
+                </Button>
+              )}
+              
+              <div className="flex gap-2">
+                <Button 
+                  onClick={closePaymentModal} 
+                  variant="outline" 
+                  className="flex-1 h-9"
+                  size="sm"
+                  disabled={registrationStatus.loading}
+                >
+                  {paymentModal.payment.status === 'registered' ? 'Close' : 'Cancel'}
+                </Button>
                 {paymentModal.payment.status === 'pending' && (
                   <Button 
-                    onClick={completeDomainRegistration}
-                    disabled={registrationStatus.loading}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    onClick={() => window.open(paymentModal.payment!.qrUrl, '_blank')}
+                    variant="outline"
+                    className="flex-1 h-9"
+                    size="sm"
                   >
-                    {registrationStatus.loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Processing Registration...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        Complete Registration with USDC
-                      </>
-                    )}
+                    <ExternalLink className="w-4 h-4 mr-1" />
+                    Open Wallet
                   </Button>
                 )}
-
-                {paymentModal.payment.status === 'registered' && (
-                  <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                    <div className="flex items-center gap-2 text-green-800 dark:text-green-200">
-                      <CheckCircle className="w-5 h-5" />
-                      <span className="font-medium">Domain Successfully Registered!</span>
-                    </div>
-                    <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                      {paymentModal.payment.domain}.sol is now registered to your wallet.
-                    </p>
-                  </div>
-                )}
-                
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={closePaymentModal} 
-                    variant="outline" 
-                    className="flex-1"
-                    disabled={registrationStatus.loading}
-                  >
-                    {paymentModal.payment.status === 'registered' ? 'Close' : 'Cancel'}
-                  </Button>
-                  {paymentModal.payment.status === 'pending' && (
-                    <Button 
-                      onClick={() => window.open(paymentModal.payment!.qrUrl, '_blank')}
-                      variant="outline"
-                      className="flex-1"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Open in Wallet
-                    </Button>
-                  )}
-                </div>
               </div>
             </div>
           </motion.div>

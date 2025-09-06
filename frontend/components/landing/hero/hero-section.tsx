@@ -5,7 +5,8 @@ import { ArrowRight, Play, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlockchainBackground } from "./blockchain-background";
 import { TalentDemo } from "./talent-demo";
-import { useAuth } from "@/hooks/useWeb3Auth";
+import { useWeb3AuthConnect } from "@web3auth/modal/react";
+import { useWeb3AuthSession } from "@/hooks/useWeb3AuthSession";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -14,20 +15,12 @@ export function HeroSection(): JSX.Element {
   const router = useRouter();
   const [showDemoSuggestion, setShowDemoSuggestion] = useState(false);
   
-  // Use actual wallet connection state
-  let isConnected = false;
-  let userInfo = null;
-  let connectLoading = false;
+  // Use actual Web3Auth hooks - same as working wallet button
+  const { isConnected: web3AuthConnected, userInfo, isLoading: sessionLoading } = useWeb3AuthSession();
+  const { connect: connectWeb3Auth, loading: web3AuthLoading } = useWeb3AuthConnect();
   
-  try {
-    const auth = useAuth();
-    isConnected = auth.isConnected;
-    userInfo = auth.user;
-    connectLoading = auth.connectLoading || false;
-  } catch (error) {
-    // Web3Auth context not available, use fallback state
-    console.log('Web3Auth context not available in HeroSection, using fallback state');
-  }
+  const isConnected = web3AuthConnected;
+  const connectLoading = web3AuthLoading || sessionLoading;
 
   const handleGetStarted = async () => {
     // If already connected, go to dashboard

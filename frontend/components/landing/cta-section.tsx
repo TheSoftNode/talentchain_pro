@@ -6,9 +6,36 @@ import { Button } from "@/components/ui/button";
 import { VideoModal } from "@/components/ui/video-modal";
 import { useVideoModal } from "@/hooks/useVideoModal";
 import { VIDEO_CONFIG } from "@/lib/config/video";
+import { useAuth } from "@/hooks/useWeb3Auth";
+import { useRouter } from "next/navigation";
 
 export function CTASection() {
   const { isOpen, videoUrl, title, description, openModal, closeModal } = useVideoModal();
+  const router = useRouter();
+  
+  // Use actual wallet connection state
+  let isConnected = false;
+  let connectLoading = false;
+  
+  try {
+    const auth = useAuth();
+    isConnected = auth.isConnected;
+    connectLoading = auth.connectLoading || false;
+  } catch (error) {
+    // Web3Auth context not available, use fallback state
+    console.log('Web3Auth context not available in CTASection, using fallback state');
+  }
+
+  const handleGetStarted = async () => {
+    // If already connected, go to dashboard
+    if (isConnected) {
+      router.push('/dashboard');
+      return;
+    }
+
+    // For new users, redirect to dashboard for wallet connection
+    router.push('/dashboard');
+  };
 
   const handleWatchDemo = () => {
     openModal(
@@ -104,11 +131,27 @@ export function CTASection() {
               >
                 <Button
                   size="lg"
-                  className="group relative bg-hedera-600 hover:bg-hedera-700 text-white shadow-lg shadow-hedera-500/25 hover:shadow-hedera-600/30 transition-all duration-300 font-semibold px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base min-w-[180px]"
+                  onClick={handleGetStarted}
+                  disabled={connectLoading}
+                  className="group relative bg-hedera-600 hover:bg-hedera-700 text-white shadow-lg shadow-hedera-500/25 hover:shadow-hedera-600/30 transition-all duration-300 font-semibold px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base min-w-[180px] disabled:opacity-50"
                 >
                   <span className="relative z-10 flex items-center">
-                    Get Started Free
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                    {connectLoading ? (
+                      <>
+                        <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Connecting...
+                      </>
+                    ) : isConnected ? (
+                      <>
+                        Go to Dashboard
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                      </>
+                    ) : (
+                      <>
+                        Get Started Free
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                      </>
+                    )}
                   </span>
                   <div className="absolute inset-0 bg-hedera-500 rounded-md blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
                 </Button>
